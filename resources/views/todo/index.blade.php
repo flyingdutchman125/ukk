@@ -52,14 +52,25 @@
             </div>
         </div>
 
-        <!-- Daftar Todo -->
+        <!-- Form Pencarian & Filter -->
         <form action="{{ route('todo.index') }}" method="GET" class="mb-3">
-            <div class="input-group">
+            <div class="input-group mb-2">
                 <input type="text" name="search" class="form-control" placeholder="Cari Todo..."
                     value="{{ request('search') }}">
                 <button type="submit" class="btn btn-primary">Cari</button>
             </div>
+            <div class="input-group">
+                <label class="input-group-text" for="filter_status">Filter</label>
+                <select name="filter_status" id="filter_status" class="form-select" onchange="this.form.submit()">
+                    <option value="">Semua</option>
+                    <option value="1" {{ request('filter_status') == '1' ? 'selected' : '' }}>Sudah Dicentang
+                    </option>
+                    <option value="0" {{ request('filter_status') == '0' ? 'selected' : '' }}>Belum Dicentang
+                    </option>
+                </select>
+            </div>
         </form>
+
 
         <table class="table table-bordered">
             <thead>

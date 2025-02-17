@@ -15,12 +15,17 @@ class TodoController extends Controller
     {
         $query = Todo::query();
 
-        if ($request->has('search') && !empty($request->search)) {
+        // Filter berdasarkan pencarian
+        if ($request->has('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        $todos = $query->get();
+        // Filter berdasarkan status dari dropdown
+        if ($request->filled('filter_status')) {
+            $query->where('status', $request->filter_status);
+        }
 
+        $todos = $query->get();
         return view('todo.index', compact('todos'));
     }
 
@@ -105,7 +110,6 @@ class TodoController extends Controller
         $todo->status = !$todo->status;
         $todo->tgl_dicentang = $todo->status ? Carbon::now() : null;
         $todo->save();
-
         return redirect()->route('todo.index');
     }
 }
