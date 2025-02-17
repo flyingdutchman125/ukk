@@ -53,6 +53,14 @@
         </div>
 
         <!-- Daftar Todo -->
+        <form action="{{ route('todo.index') }}" method="GET" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Cari Todo..."
+                    value="{{ request('search') }}">
+                <button type="submit" class="btn btn-primary">Cari</button>
+            </div>
+        </form>
+
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -60,6 +68,7 @@
                     <th>Nama</th>
                     <th>Prioritas</th>
                     <th>Status</th>
+                    <th>Tanggal Dicentang</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -74,28 +83,43 @@
                             @endfor
                         </td>
                         <td>
-                            <form action="{{ route('todo.updateStatus', $todo->id) }}" method="POST">
-                                @csrf
-                                <input type="checkbox" name="status" onChange="this.form.submit()"
-                                    {{ $todo->status == 1 ? 'checked' : '' }}>
-                            </form>
+                            @if (!$todo->status)
+                                <form action="{{ route('todo.updateStatus', $todo->id) }}" method="POST">
+                                    @csrf
+                                    <input type="checkbox" name="status" onChange="this.form.submit()">
+                                </form>
+                            @else
+                                ✅ Selesai
+                            @endif
                         </td>
                         <td>
                             {{ $todo->tgl_dicentang ? 'Dicentang pada: ' . $todo->tgl_dicentang : 'Belum selesai' }}
                         </td>
                         <td>
-                            <a href="{{ route('todo.edit', $todo->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                            <form action="{{ route('todo.destroy', $todo->id) }}" method="POST"
-                                style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Apakah Anda yakin ingin menghapus Todo ini?')">Hapus</button>
-                            </form>
+                            @if (!$todo->status)
+                                <a href="{{ route('todo.edit', $todo->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                <form action="{{ route('todo.destroy', $todo->id) }}" method="POST"
+                                    style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Apakah Anda yakin ingin menghapus Todo ini?')">Hapus</button>
+                                </form>
+                            @else
+                                <span class="text-success">✅ Selesai</span>
+                                <form action="{{ route('todo.destroy', $todo->id) }}" method="POST"
+                                    style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Apakah Anda yakin ingin menghapus Todo ini?')">Hapus</button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
             </tbody>
+
         </table>
     </div>
 
